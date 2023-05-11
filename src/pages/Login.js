@@ -1,30 +1,37 @@
 import {useState} from "react";
 import {supabase} from "../persistence/Supabase";
+import {useNavigate, useNavigation} from "react-router-dom";
 
 function Login(){
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const navigation = useNavigate();
+    localStorage.removeItem('user')
+
     const handleLogin = async (event) => {
         event.preventDefault()
 
-        const { error } = await supabase.auth.signInWithPassword({ email, password })
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
         if (error) {
-            alert(error.error_description || error.message)
+            alert(error.message)
         } else {
-            var session = await supabase.auth.getSession();
-            console.log(session)
+            const user = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', data.user.id)
+                .single()
+            localStorage.setItem('user', user.data.username);
+            navigation('/')
+            window.location.reload()
         }
     }
 
     return(
-        <html>
-    <head>
+        <div>
         <title>Login - City Initiatives</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-    </head>
-    <body>
     <div className="container mt-5">
         <div className="row">
             <div className="col-md-6 mx-auto">
@@ -72,9 +79,8 @@ function Login(){
     <footer className="bg-primary text-white text-center py-3">
         <p>City Initiatives &copy; 2023</p>
     </footer>
-    </body>
 
-    </html>);
+    </div>);
 }
 
 export default Login;

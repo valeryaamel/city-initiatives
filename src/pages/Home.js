@@ -1,12 +1,9 @@
 function Home(){
     return (
-        <html>
-        <head>
+        <div>
             <title>City Initiatives</title>
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-        </head>
-        <body>
-        <div className="container mt-5">
+            <div className="container mt-5">
             <div className="row">
                 <div className="col-md-8 mx-auto">
                     <h1>Добро пожаловать на портал городских инициатив</h1>
@@ -61,13 +58,12 @@ function Home(){
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
 
-        <footer className="bg-primary text-white text-center py-3">
+            <footer className="bg-primary text-white text-center py-3">
             <p>Городские инициативы &copy; 2023</p>
-        </footer>
-        </body>
-        </html>
+            </footer>
+        </div>
         )
 }
 

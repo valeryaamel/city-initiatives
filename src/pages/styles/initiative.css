@@ -1,0 +1,32 @@
+.card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.map-container {
+    height: 100%;
+}
+
+
+h2 {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+}
+
+.images-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.images-container img {
+    width: 48%;
+    margin: 1%;
+}
