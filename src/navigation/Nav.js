@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 import Home from "../pages/Home";
@@ -9,14 +9,16 @@ import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import CreateInitiatives from "../pages/CreateInitiatives";
 import Initiatives from "../pages/initiatives";
+import {IsAuthenticated} from "../services/UserService";
+import EditInitiative from "../pages/EditInitiative";
 
 function Nav() {
+    const [auth, setAuth] = useState(false);
 
-    const [user, setUser] = useState(localStorage.getItem('user'))
-    function handleLogout(username){
-        localStorage.removeItem('username')
-        setUser(null)
-    }
+    useEffect(() => {
+        IsAuthenticated()
+            .then((data) => {setAuth(data)})
+    }, [])
 
     return (
         <Router>
@@ -44,8 +46,8 @@ function Nav() {
                                 <a className="nav-link" href="#">Get Involved</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href={user == null ? "/login" : "/profile"}>
-                                    {user == null ? 'Вход' : user}</a>
+                                <a className="nav-link" href={auth ? "/profile" : "/login"}>
+                                    {auth ? 'Личный кабинет' : 'Вход' }</a>
                             </li>
                         </ul>
                     </div>
@@ -58,6 +60,7 @@ function Nav() {
                 <Route path="/register" element={<Registration/>}/>
                 <Route path="/map" element={<Map />}/>
                 <Route path="/info/:itemId" element={<Info />}/>
+                <Route path="/edit/:itemId" element={<EditInitiative />}/>
                 <Route path="/login" element={<Login />}/>
                 <Route path="/profile" element={<Profile />}/>
                 <Route path="/create" element={<CreateInitiatives />}/>

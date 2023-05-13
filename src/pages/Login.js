@@ -1,28 +1,24 @@
 import {useState} from "react";
 import {supabase} from "../persistence/Supabase";
-import {useNavigate, useNavigation} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 function Login(){
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const navigation = useNavigate();
-    localStorage.removeItem('user')
 
     const handleLogin = async (event) => {
         event.preventDefault()
 
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+        const { data, error } = await supabase
+            .auth
+            .signInWithPassword({ email, password })
+
 
         if (error) {
             alert(error.message)
         } else {
-            const user = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', data.user.id)
-                .single()
-            localStorage.setItem('user', user.data.username);
             navigation('/')
             window.location.reload()
         }
@@ -60,25 +56,17 @@ function Login(){
                                        onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                            <div className="form-check">
-                                <label className="form-check-label">
-                                    <input className="form-check-input" type="checkbox" name="remember"/> Remember me
-                                </label>
-                            </div>
                             <button type="submit"
                                     className="btn btn-primary mt-3"
                                     onClick={handleLogin}
                             >Submit</button>
-                            <a href="/register" className="btn btn-outline-primary mt-3 ml-3">Register</a>
+                            <a href="/register" className="btn btn-outline-primary mt-3 ml-3">Зарегистрироваться</a>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <footer className="bg-primary text-white text-center py-3">
-        <p>City Initiatives &copy; 2023</p>
-    </footer>
 
     </div>);
 }

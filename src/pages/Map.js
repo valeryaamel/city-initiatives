@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { TileLayer, Marker, Popup, MapContainer} from 'react-leaflet';
-import {supabase} from "../persistence/Supabase";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
-import {useNavigate} from "react-router-dom";
+import {getInitiatives} from "../services/InitiativeService";
 
 function MapComponent() {
     const [initiatives, setInitiatives] = useState([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    const navigation = useNavigate();
+
     useEffect(() => {
-        async function fetchInitiatives() {
-            const response = await supabase
-                .from('initiatives')
-                .select('*');
-            const data = response.data;
-            setInitiatives(data);
-        }
-        fetchInitiatives().then(x => setIsLoaded(true));
+        getInitiatives().then(data => {
+            setInitiatives(data)
+            console.log(data)
+            setIsLoaded(true)
+        })
     }, []);
 
     if (!isLoaded) return;
@@ -46,13 +42,16 @@ function MapComponent() {
                     {initiatives.map((item) => (
                         <Marker
                             key={item.id}
-                            position={[item.point_x, item.point_y]}
+                            position={[item.x, item.y]}
                             icon={markerIcon}
                         >
-                            <Popup>{item.name}
-                            <a href={`/info/${item.id}`}>
-                                click
-                            </a>
+                            <Popup>
+                                <label>{item.name}</label>
+                                <br/>
+                                <img alt={'pic'} width={'100px'} height={'100px'} src={item.image} />
+                                <br/>
+                                <br/>
+                                <a href={`/info/${item.id}`}>Подробнее</a>
                             </Popup>
                         </Marker>
                     ))}

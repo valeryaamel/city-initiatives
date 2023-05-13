@@ -26,7 +26,6 @@ function Info(){
     }, [])
 
     if (!loaded) return ;
-    console.log(initiative)
 
     const markerIcon = L.icon({
         iconUrl: 'https://t.ly/g1WM',
@@ -41,6 +40,9 @@ function Info(){
             <div className="slider-container">
                 <ImageSlider images={initiative.images} />
             </div>
+            <text style={{textAlign: 'center', marginTop: '3%'}}>
+                {initiative.description}
+            </text>
             <div>
                 <MapContainer center={[48.70711909612996, 44.50666693223726]}
                               zoom={13}
@@ -63,14 +65,6 @@ function Info(){
                         </Popup>
                     </Marker>
                 </MapContainer>
-                {/*<MapContainer center={[initiative.x, initiative.y]} zoom={15} scrollWheelZoom={false}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{48.70772853476065}/{44.51745986938477}.png" />
-                    <Marker position={[initiative.x, initiative.y]}>
-                        <Popup>
-                            <strong>{initiative.name}</strong>
-                        </Popup>
-                    </Marker>
-                </MapContainer>*/}
             </div>
         </div>
     );

@@ -2,10 +2,12 @@ import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getInitiatives} from "../services/InitiativeService";
 import './styles/initiatives.css';
+import {IsAuthenticated} from "../services/UserService";
 
 function Initiatives(){
     const navigate = useNavigate();
     const [initiatives, setInitiatives] = useState([]);
+    const [auth, setAuth] = useState(false);
 
     useEffect(() =>{
         getInitiatives()
@@ -15,11 +17,20 @@ function Initiatives(){
             .catch((ex) => {
                 alert(ex.message)
             })
+        IsAuthenticated().then((data) => {setAuth(data)})
     }, [])
 
     console.log(initiatives)
 
     return(<div>
+        {
+            auth ?
+                <button onClick={() => navigate('/create')}>
+                    Создать
+                </button>
+                :
+                <br/>
+        }
 
         <div className="card-grid">
             {initiatives.map((item) => (
@@ -30,9 +41,7 @@ function Initiatives(){
             ))}
         </div>
 
-        <button onClick={() => navigate('/create')}>
-            Создать
-        </button>
+
     </div>);
 }
 

@@ -1,21 +1,34 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {MapContainer, TileLayer, Marker, useMapEvents} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {supabase} from "../persistence/Supabase";
 import {useNavigate} from "react-router-dom";
 import {Button, Container, Form, ListGroup, FormText} from 'react-bootstrap';
+import {IsAuthenticated} from "../services/UserService";
 function CreateInitiatives() {
     const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
+    const [auth, setAuth] = useState(false);
+    const [position, setPosition] = useState(null);
+    const [files, setFiles] = useState([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        IsAuthenticated().then((data) => {
+            setAuth(data)
+        })
+    }, [])
+
     const handleNameChange = (event) => {
         setName(event.target.value);
     };
 
-
-    const [position, setPosition] = useState(null);
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value)
+    }
 
     function handleMapClick(e) {
         setPosition(e.latlng);
@@ -43,26 +56,6 @@ function CreateInitiatives() {
         popupAnchor: [0, -38]
     });
 
-    const [files, setFiles] = useState([]);
-    const [docs, setDocs] = useState([]);
-
-    const handleDocsChange = (event) => {
-        const fileList = event.target.files;
-        const newFiles = [];
-
-        for (let i = 0; i < fileList.length; i++) {
-            const file = fileList[i];
-            newFiles.push({
-                name: file.name,
-                size: file.size,
-                type: file.type,
-                file: file,
-                data: URL.createObjectURL(file),
-            });
-        }
-
-        setDocs([...docs, ...newFiles]);
-    };
     const handleFileChange = (event) => {
         const fileList = event.target.files;
         const newFiles = [];
@@ -81,12 +74,6 @@ function CreateInitiatives() {
         setFiles([...files, ...newFiles]);
     };
 
-    const handleRemoveDoc = (index) => {
-        const newFiles = [...docs];
-        newFiles.splice(index, 1);
-        setDocs(newFiles);
-    };
-
     const handleRemoveFile = (index) => {
         const newFiles = [...files];
         newFiles.splice(index, 1);
@@ -103,6 +90,7 @@ function CreateInitiatives() {
             name: name,
             point_x: x,
             point_y: y,
+            description: description,
             owner: ownerId
         }
 
@@ -134,42 +122,24 @@ function CreateInitiatives() {
                 .insert(initiative_image)
         }
 
-        for(let i = 0; i < docs.length; i++) {
-            console.log(docs[0])
-            const {data: docData, error: docError} = await supabase
-                .storage
-                .from('docs')
-                .upload(`${iData[0].id}/${uuidv4()}-${docs[i].name}`, docs[i].file, {
-                    cacheControl: "3600",
-                    upsert: false,
-                });
-
-            console.log(docError)
-
-            const {data: url} = supabase.storage.from('images').getPublicUrl(docData.path)
-
-            const initiative_doc = {
-                doc_url: url.publicUrl,
-                initiative_id: iData[0].id
-            }
-
-            const {data, error} = await supabase
-                .from('initiatives_docs')
-                .insert(initiative_doc)
-
-            console.log(error)
-        }
         navigate(`/info/${iData[0].id}`)
     }
+
+    if (!auth) return;
 
     return (
         <Container>
             <Form>
                 <Form.Label>
                     <FormText>Название:</FormText>
-                    <Form.Control type="text" value={name} onChange={handleNameChange} />
+                    <Form.Control style={{width: '533%'}} type="text" value={name} onChange={handleNameChange} />
                 </Form.Label>
                 <br />
+                <Form.Label>
+                    <FormText>Описание:</FormText>
+                    <Form.Control style={{width: '580%'}} as="textarea" value={description} onChange={handleDescriptionChange} />
+                </Form.Label>
+                <br/>
                 <Form.Label>
                     <FormText>Широта:</FormText>
                     <Form.Control
@@ -212,27 +182,6 @@ function CreateInitiatives() {
                 </ListGroup>
             </div>
 
-            <div>
-                <Form.Label htmlFor="doc-input">Прикрепить документы:</Form.Label>
-                <Form.Control
-                    id="doc-input"
-                    type="file"
-                    accept=".pdf"
-                    multiple
-                    onChange={handleDocsChange}
-                />
-
-                <ListGroup>
-                    {docs.map((file, index) => (
-                        <ListGroup.Item key={index}>
-                            <div>
-                                <strong>{file.name}</strong> ({file.type}, {file.size} bytes)
-                                <Button onClick={() => handleRemoveDoc(index)}>Remove</Button>
-                            </div>
-                        </ListGroup.Item>
-                    ))}
-                </ListGroup>
-            </div>
 
             <br />
             <MapContainer

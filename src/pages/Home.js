@@ -1,4 +1,15 @@
+import {useEffect, useState} from "react";
+import {getFourLastInitiatives} from "../services/InitiativeService";
+import './styles/initiatives.css';
+
 function Home(){
+    const [initiatives, setInitiatives] = useState([]);
+
+    useEffect(() => {
+        getFourLastInitiatives()
+            .then((data) => {setInitiatives(data)})
+    }, [])
+
     return (
         <div>
             <title>City Initiatives</title>
@@ -6,56 +17,21 @@ function Home(){
             <div className="container mt-5">
             <div className="row">
                 <div className="col-md-8 mx-auto">
-                    <h1>Добро пожаловать на портал городских инициатив</h1>
-                    <p>Назначение портала</p>
+                    <h1 className="text-center">Добро пожаловать на портал городских инициатив</h1>
+                    <p className="text-center">Назначение портала</p>
 
-                    <h2>Последние проекты</h2>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <div className="card mb-4">
-                                <img src="https://via.placeholder.com/350x200" className="card-img-top"
-                                     alt="Initiative 1"/>
-                                <div className="card-body">
-                                    <h5 className="card-title">Инициатива 1</h5>
-                                    <p className="card-text">Описание</p>
-                                    <a href="#" className="btn btn-primary">Подробнее</a>
-                                </div>
+                    <h2 className="text-center">Последние проекты</h2>
+
+                    <div className="card-grid">
+                        {initiatives.map((item) => (
+                            <div className="card" key={item.id}>
+                                <img src={item.image} alt={item.name} />
+                                <h2>{item.name}</h2>
+                                <a href={`/info/${item.id}`} className="btn btn-primary">Подробнее</a>
                             </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card mb-4">
-                                <img src="https://via.placeholder.com/350x200" className="card-img-top"
-                                     alt="Initiative 2"/>
-                                <div className="card-body">
-                                    <h5 className="card-title">Инициатива 2</h5>
-                                    <p className="card-text">Описание</p>
-                                    <a href="#" className="btn btn-primary">Подробнее</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card mb-4">
-                                <img src="https://via.placeholder.com/350x200" className="card-img-top"
-                                     alt="Initiative 3"/>
-                                <div className="card-body">
-                                    <h5 className="card-title">Инициатива 3</h5>
-                                    <p className="card-text">Описание</p>
-                                    <a href="#" className="btn btn-primary">Подробнее</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-6">
-                            <div className="card mb-4">
-                                <img src="https://via.placeholder.com/350x200" className="card-img-top"
-                                     alt="Initiative 4"/>
-                                <div className="card-body">
-                                    <h5 className="card-title">Инициатива 4</h5>
-                                    <p className="card-text">Описание</p>
-                                    <a href="#" className="btn btn-primary">Подробнее</a>
-                                </div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
+
                 </div>
             </div>
             </div>

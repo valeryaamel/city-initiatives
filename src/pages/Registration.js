@@ -39,9 +39,6 @@ function Registration(){
                     </div>
                 </div>
             </div>
-            <footer className="bg-primary text-white text-center py-3">
-                <p>City Initiatives &copy; 2023</p>
-            </footer>
     </div>)
 }
 

@@ -4,6 +4,8 @@
     grid-gap: 1rem;
     margin: 0 auto;
     max-width: 1200px;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .card {
@@ -15,7 +17,7 @@
 .card img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
 }
 
 .card h2 {
@@ -24,4 +26,8 @@
     text-align: center;
     font-size: 1.5rem;
     background-color: #f2f2f2;
+}
+
+.text-center {
+    text-align: center;
 }
