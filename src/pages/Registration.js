@@ -1,5 +1,17 @@
+import {useState} from "react";
+import {SignUp} from "../services/UserService";
 
 function Registration(){
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    const handleSignUp = async () => {
+        await SignUp({
+            email: email,
+            password: password
+        });
+    }
 
     return (
         <div>
@@ -13,26 +25,30 @@ function Registration(){
                             <div className="card-body">
                                 <form>
                                     <div className="form-group">
-                                        <label htmlFor="name">Name:</label>
-                                        <input type="text" className="form-control" id="name" placeholder="Enter name"
-                                               name="name"/>
-                                    </div>
-                                    <div className="form-group">
                                         <label htmlFor="email">Email:</label>
-                                        <input type="email" className="form-control" id="email"
-                                               placeholder="Enter email" name="email"/>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            id="email"
+                                            placeholder="Enter email"
+                                            name="email"
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="password">Password:</label>
-                                        <input type="password" className="form-control" id="password"
-                                               placeholder="Enter password" name="password"/>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="password"
+                                            placeholder="Enter password"
+                                            name="password"
+                                            onChange={(e) => setPassword(e.target.value)}/>
                                     </div>
-                                    <div className="form-group">
-                                        <label htmlFor="confirm-password">Confirm Password:</label>
-                                        <input type="password" className="form-control" id="confirm-password"
-                                               placeholder="Confirm password" name="confirm-password"/>
-                                    </div>
-                                    <button type="submit" className="btn btn-primary">Register</button>
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={handleSignUp}
+                                    >Register</button>
                                 </form>
                             </div>
                         </div>

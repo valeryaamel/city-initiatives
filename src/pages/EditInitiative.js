@@ -5,6 +5,8 @@ import {Button, Container, Form, FormText, ListGroup} from 'react-bootstrap';
 import {MapContainer, Marker, TileLayer, useMapEvents} from "react-leaflet";
 import L from "leaflet";
 import {supabase} from "../persistence/Supabase";
+import {remove} from "leaflet/src/dom/DomUtil";
+import {DeleteImage, UploadImage} from "../services/ImageService";
 
 function EditInitiative() {
     const location = useLocation();
@@ -18,7 +20,9 @@ function EditInitiative() {
     const [x, setX] = useState(0);
     const [y, setY] = useState(0);
     const [images, setImages] = useState([]);
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState([]);
+    const [addedFiles, setAddedFiles] = useState([]);
+    const [removedFiles, setRemovedFiles] = useState([]);
 
     const navigate = useNavigate();
 
@@ -32,9 +36,12 @@ function EditInitiative() {
                 setPosition({lat: data.x, lng: data.y})
                 setImages(data.images)
                 setFiles(data.images.map((img) => ({
-                    source: supabase,
+                    source: 'supabase',
                     id: img.id,
-                    name: img.image_url
+                    name: img.image_url,
+                    path: img.image_url,
+                    data: undefined,
+                    extension: undefined
                 })))
                 setLoaded(true)
             })
@@ -47,6 +54,43 @@ function EditInitiative() {
     const handleDescriptionChange = (event) => {
         setDescription(event.target.value)
     }
+
+    const handleFileChange = (event) => {
+        const fileList = event.target.files;
+        const newFiles = [];
+        const added = [];
+
+
+        for (let i = 0; i < fileList.length; i++) {
+            const file = fileList[i];
+            const fileObj = {
+                source: 'local',
+                extension: file.name.split('.').pop(),
+                name: URL.createObjectURL(file),
+                id: 0,
+                data: file
+            };
+
+            newFiles.push(fileObj);
+            added.push(fileObj)
+        }
+
+        setAddedFiles([...addedFiles, ...added]);
+        setFiles([...files, ...newFiles]);
+    };
+
+    const handleRemoveFile = async (index) => {
+        const newFiles = [...files];
+
+        if (files[index].source === 'supabase') {
+            const removed = [...removedFiles]
+            removed.push(files[index])
+            setRemovedFiles(removed)
+        }
+
+        newFiles.splice(index, 1);
+        setFiles(newFiles);
+    };
 
     function handleMapClick(e) {
         setPosition(e.latlng);
@@ -84,12 +128,19 @@ function EditInitiative() {
                 description: description
             })
             .eq('id', id)
+
+        for (let i = 0; i < removedFiles.length; i++){
+            await DeleteImage(removedFiles[i].id);
+        }
+
+        for (let i = 0; i < addedFiles.length; i++){
+            await UploadImage(id, addedFiles[i]);
+        }
+
         navigate(`/info/${id}`)
     }
 
     if (!loaded) return ;
-
-    console.log(images)
 
     return(
         <Container>
@@ -138,16 +189,16 @@ function EditInitiative() {
                 type="file"
                 accept="image/*"
                 multiple
+                onChange={handleFileChange}
             />
 
             <ListGroup>
-                {files.map(x => (
-                    <ListGroup.Item  key={x.id}>
+                {files.map((file, index) => (
+                    <ListGroup.Item  key={index}>
                         <div>
-                            <strong>{x.name}</strong> {x.type}
-                            <Button >Remove</Button>
+                            <img src={file.name} alt={file.name} width={100} height={100}/>
+                            <Button onClick={() => handleRemoveFile(index)}>Remove</Button>
                         </div>
-                        <img src={x.name} alt={x.name} width={100} height={100}/>
                     </ListGroup.Item>
                 ))}
             </ListGroup>

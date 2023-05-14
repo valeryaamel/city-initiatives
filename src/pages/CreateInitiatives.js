@@ -94,7 +94,7 @@ function CreateInitiatives() {
             owner: ownerId
         }
 
-        const {data: iData, error} = await supabase
+        const {data: iData} = await supabase
             .from('initiatives')
             .insert(initiative)
             .select()
@@ -102,7 +102,7 @@ function CreateInitiatives() {
 
         for(let i = 0; i < files.length; i++){
             console.log(files[0])
-            const { data: imgData, error: imgError } = await supabase
+            const { data: imgData} = await supabase
                 .storage
                 .from('images')
                 .upload(`${iData[0].id}/${uuidv4()}-${files[i].name}`, files[i].file, {

@@ -6,6 +6,16 @@ export const IsAuthenticated = async () => {
     return data.user !== null;
 }
 
+export const SignUp = async (user) => {
+    const {data, error} = await supabase.auth.signUp({
+        email: user.email,
+        password: user.password,
+        options: {
+            emailRedirectTo: 'http://localhost:3000/'
+        }
+    })
+}
+
 export const Logout = async () => {
     const {data, error} = await supabase.auth.signOut();
 }
@@ -19,17 +29,17 @@ export const GetUser = async () => {
         .eq('id', userData.user.id)
         .single()
 
-    const {data: roleData} = await supabase
+    /*const {data: roleData} = await supabase
         .from('roles')
         .select('*')
         .eq('id', profileData.role_id)
-        .single()
+        .single()*/
 
     return {
         id: profileData.id,
         username: profileData.username,
         email: userData.user.email,
-        role: roleData.name
+        //role: roleData.name
     }
 
 }

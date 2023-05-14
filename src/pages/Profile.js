@@ -12,6 +12,7 @@ function Profile(){
     useEffect(() => {
         GetUser().then(data => setUser(data))
         getUsersInitiatives().then((data) => setUsersInitiatives(data))
+        console.log(user)
     }, []);
 
     const handleLogout = () => {
