@@ -7,6 +7,7 @@ import L from "leaflet";
 import {supabase} from "../persistence/Supabase";
 import {remove} from "leaflet/src/dom/DomUtil";
 import {DeleteImage, UploadImage} from "../services/ImageService";
+import {getUserId} from "../services/UserService";
 
 function EditInitiative() {
     const location = useLocation();
@@ -23,6 +24,8 @@ function EditInitiative() {
     const [files, setFiles] = useState([]);
     const [addedFiles, setAddedFiles] = useState([]);
     const [removedFiles, setRemovedFiles] = useState([]);
+
+    const [approved, setApproved] = useState(false);
 
     const navigate = useNavigate();
 
@@ -43,9 +46,18 @@ function EditInitiative() {
                     data: undefined,
                     extension: undefined
                 })))
+                getUserId().then((x) => {
+                    if (data.owner === x) {
+                        setApproved(true);
+                    }
+                })
                 setLoaded(true)
             })
     }, [])
+
+    if (!approved) {
+        return ;
+    }
 
     const handleNameChange = (event) => {
         setName(event.target.value);
@@ -100,7 +112,7 @@ function EditInitiative() {
     }
 
     const markerIcon = L.icon({
-        iconUrl: 'https://t.ly/g1WM',
+        iconUrl: 'https://t.ly/5-J9',
         iconSize: [38, 38],
         iconAnchor: [19, 38],
         popupAnchor: [0, -38]

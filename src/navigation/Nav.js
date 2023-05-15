@@ -11,6 +11,8 @@ import CreateInitiatives from "../pages/CreateInitiatives";
 import Initiatives from "../pages/initiatives";
 import {IsAuthenticated} from "../services/UserService";
 import EditInitiative from "../pages/EditInitiative";
+import UserInitiatives from "../pages/UserInitiatives";
+import ApproveInitiatives from "../pages/ApproveInitiatives";
 
 function Nav() {
     const [auth, setAuth] = useState(false);
@@ -34,19 +36,20 @@ function Nav() {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav ml-auto">
                             <li className="nav-item">
-                                <a className="nav-link" href="/">Home</a>
+                                <a className="nav-link" href="/">Главная</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/initiatives">Initiatives</a>
+                                <a className="nav-link" href="/initiatives">Инициативы</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/map">Map</a>
+                                <a className="nav-link" href="/map">Карта</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link" href="#">Get Involved</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href={auth ? "/profile" : "/login"}>
+                                <a className="nav-link"
+                                   href={auth ? "/profile" : "/login"}>
                                     {auth ? 'Личный кабинет' : 'Вход' }</a>
                             </li>
                         </ul>
@@ -57,6 +60,8 @@ function Nav() {
             <Routes>
                 <Route exact path="/" element={<Home/>}/>
                 <Route path="/initiatives" element={<Initiatives />}/>
+                <Route path="/initiatives/:itemId" element={<UserInitiatives />}/>
+                <Route path="/initiatives/approve" element={<ApproveInitiatives />}/>
                 <Route path="/register" element={<Registration/>}/>
                 <Route path="/map" element={<Map />}/>
                 <Route path="/info/:itemId" element={<Info />}/>

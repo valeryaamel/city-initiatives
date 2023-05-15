@@ -19,7 +19,7 @@ function MapComponent() {
     if (!isLoaded) return;
 
     const markerIcon = L.icon({
-        iconUrl: 'https://t.ly/g1WM',
+        iconUrl: 'https://t.ly/5-J9',
         iconSize: [38, 38],
         iconAnchor: [19, 38],
         popupAnchor: [0, -38]

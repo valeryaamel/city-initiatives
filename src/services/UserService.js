@@ -6,14 +6,38 @@ export const IsAuthenticated = async () => {
     return data.user !== null;
 }
 
+export const getUserId = async () => {
+    const {data, error} = await supabase
+        .auth
+        .getUser();
+
+    if (error) {
+        return ''
+    } else {
+        return data.user.id.toString()
+    }
+}
+
 export const SignUp = async (user) => {
     const {data, error} = await supabase.auth.signUp({
         email: user.email,
-        password: user.password,
-        options: {
-            emailRedirectTo: 'http://localhost:3000/'
-        }
+        password: user.password
     })
+    await addProfile(data.user.id, user)
+}
+
+const addProfile = async (id, user) => {
+    const e = user.email.split('@')
+    const em = `${e[0]}${e[1]}`
+    const {data, error} = await supabase
+        .from('profiles')
+        .update({
+            first_name: user.firstName,
+            last_name: user.lastName,
+            patronymic: user.patronymic,
+            e: em
+        })
+        .eq('id', id)
 }
 
 export const Logout = async () => {
@@ -29,17 +53,14 @@ export const GetUser = async () => {
         .eq('id', userData.user.id)
         .single()
 
-    /*const {data: roleData} = await supabase
-        .from('roles')
-        .select('*')
-        .eq('id', profileData.role_id)
-        .single()*/
 
     return {
         id: profileData.id,
-        username: profileData.username,
         email: userData.user.email,
-        //role: roleData.name
+        firstName: profileData.first_name,
+        lastName: profileData.last_name,
+        patronymic: profileData.patronymic,
+        role: profileData.role_id
     }
 
 }

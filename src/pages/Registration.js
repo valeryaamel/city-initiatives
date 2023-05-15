@@ -1,16 +1,26 @@
 import {useState} from "react";
 import {SignUp} from "../services/UserService";
+import {useNavigate} from "react-router-dom";
 
 function Registration(){
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [patronymic, setPatronymic] = useState('')
+
+    const navigate = useNavigate();
 
     const handleSignUp = async () => {
         await SignUp({
             email: email,
-            password: password
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            patronymic: patronymic
         });
+        navigate('/')
     }
 
     return (
@@ -23,7 +33,7 @@ function Registration(){
                                 <h4>Register</h4>
                             </div>
                             <div className="card-body">
-                                <form>
+                                {/*<form>*/}
                                     <div className="form-group">
                                         <label htmlFor="email">Email:</label>
                                         <input
@@ -33,6 +43,33 @@ function Registration(){
                                             placeholder="Enter email"
                                             name="email"
                                             onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="email">Имя:</label>
+                                        <input
+                                            className="form-control"
+                                            placeholder="Введите имя"
+                                            name="firstName"
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="email">Фамилия:</label>
+                                        <input
+                                            className="form-control"
+                                            placeholder="Введите фамилию"
+                                            name="lastName"
+                                            onChange={(e) => setLastName(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="email">Отчество:</label>
+                                        <input
+                                            className="form-control"
+                                            placeholder="Введите отчество"
+                                            name="patronymic"
+                                            onChange={(e) => setPatronymic(e.target.value)}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -49,7 +86,7 @@ function Registration(){
                                         className="btn btn-primary"
                                         onClick={handleSignUp}
                                     >Register</button>
-                                </form>
+                               {/* </form>*/}
                             </div>
                         </div>
                     </div>

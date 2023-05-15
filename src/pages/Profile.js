@@ -1,59 +1,94 @@
 import {useEffect, useState} from "react";
 import {GetUser, Logout} from "../services/UserService";
 import {useNavigate} from "react-router-dom";
-import {getUsersInitiatives} from "../services/InitiativeService";
+import {supabase} from "../persistence/Supabase";
 
 function Profile(){
     const [user, setUser] = useState({});
-    const [usersInitiatives, setUsersInitiatives] = useState([])
-    const [hideUsersInitiatives, setHideUsersInitiatives] = useState(false)
+    const [admin, setAdmin] = useState(false);
+    const [email, setEmail] = useState('')
     const navigate = useNavigate();
 
     useEffect(() => {
-        GetUser().then(data => setUser(data))
-        getUsersInitiatives().then((data) => setUsersInitiatives(data))
-        console.log(user)
+        GetUser().then(data => {
+            setUser(data)
+            if (data.role === 1) {
+                setAdmin(true)
+            }
+        })
+
+
     }, []);
+
+    const upgradeUser = async () => {
+        const e = email.split('@')
+        const {d} = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('e', `${e[0]}${e[1]}`)
+        const {data, error} = await supabase
+            .from('profiles')
+            .update({
+                role_id: 2
+            })
+            .eq('e', `${e[0]}${e[1]}`)
+        console.log(data)
+        console.log(error)
+    }
 
     const handleLogout = () => {
         Logout()
             .then(() => {
                 navigate('/')
                 window.location.reload()
+                window.location.reload()
+                window.location.reload()
             })
     }
-
+    console.log(admin)
     return(
         <div>
             <div style={{marginLeft: '25%', marginRight: '25%', marginTop: '2%'}} className="card">
                 <div style={{marginLeft: '25%', marginRight: '25%', marginTop: '2%'}} className="card-body">
-                    <h5 className="card-title">Profile</h5>
+                    <h5 className="card-title">Профиль</h5>
                     <ul className="list-group list-group-flush">
-                        <li className="list-group-item"><strong>Логин:</strong> {user.username}</li>
-                        <li className="list-group-item"><strong>Имя:</strong> user.firstname</li>
-                        <li className="list-group-item"><strong>Фамилия:</strong> Lastname</li>
-                        <li className="list-group-item"><strong>Отчество:</strong> Patronymic</li>
+                        <li className="list-group-item"><strong>Имя:</strong> {user.firstName}</li>
+                        <li className="list-group-item"><strong>Фамилия:</strong> {user.lastName}</li>
+                        <li className="list-group-item"><strong>Отчество:</strong> {user.patronymic}</li>
                         <li className="list-group-item"><strong>Email:</strong> {user.email}</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div style={{marginLeft: '25%', marginRight: '25%', marginTop: '2%'}} className="card">
-                <div style={{marginLeft: '25%',marginRight: '5%', marginTop: '2%'}} className="card-body">
-
-                    <strong className="card-title">Ваши инициативы </strong>
-                    <button onClick={(e) => setHideUsersInitiatives(!hideUsersInitiatives)}
-                            className="btn btn-info">{hideUsersInitiatives ? 'Показать' : 'Скрыть'}</button>
-                    <ul hidden={hideUsersInitiatives} className="list-group list-group-flush">
+                        <li className="list-group-item"><button
+                            className="btn btn-primary"
+                            onClick={(e) => navigate(`/initiatives/${user.id}`)}
+                        >Ваши инициативы</button></li>
                         {
-                            usersInitiatives.map(x => (
-                                <li style={{marginTop: '3px'}} className="list-group-item" key={x.id}>
-                                    <strong>{x.name} </strong>
+                            admin ?
+                                <li className="list-group-item"><button
+                                    className="btn btn-primary"
+                                    onClick={(e) => navigate(`/initiatives/approve`)}
+                                >Подтвердить инициативы</button></li>
+                                :
+                                <div></div>
+                        }
+                        {
+                            admin ?
+                                <li className="list-group-item">
+                                    <div className="input-group mb-3">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text" id="basic-addon1">@</span>
+                                        </div>
+                                        <input type="text" className="form-control" placeholder="Email"
+                                               aria-label="Username" aria-describedby="basic-addon1"
+                                        onChange={(e) => {
+                                            setEmail(e.target.value)
+                                        }}/>
+                                    </div>
                                     <button
-                                        onClick={(e) => navigate(`/edit/${x.id}`)}
-                                        className="btn btn-primary">Редактировать</button>
-                                </li>
-                            ))
+                                        style={{marginTop: '5px'}}
+                                    className="btn btn-primary"
+                                    onClick={(e) => upgradeUser()}
+                                >Сделать редактором</button></li>
+                                :
+                                <div></div>
                         }
                     </ul>
                 </div>

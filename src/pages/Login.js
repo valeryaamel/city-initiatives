@@ -1,12 +1,22 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {supabase} from "../persistence/Supabase";
 import {useNavigate} from "react-router-dom";
+import {GetUser, IsAuthenticated} from "../services/UserService";
 
 function Login(){
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [auth, setAuth] = useState()
 
     const navigation = useNavigate();
+
+    useEffect(() => {
+        IsAuthenticated().then((data) => {
+            if (data) {
+                navigation('/profile')
+            }
+        })
+    })
 
     const handleLogin = async (event) => {
         event.preventDefault()

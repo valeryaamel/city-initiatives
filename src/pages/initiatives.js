@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getInitiatives} from "../services/InitiativeService";
 import './styles/initiatives.css';
 import {IsAuthenticated} from "../services/UserService";
@@ -20,21 +20,21 @@ function Initiatives(){
         IsAuthenticated().then((data) => {setAuth(data)})
     }, [])
 
-    console.log(initiatives)
-
     return(<div>
         {
             auth ?
-                <button onClick={() => navigate('/create')}>
-                    Создать
-                </button>
+                <div className="d-flex justify-content-center">
+                    <button
+                        onClick={() => navigate('/create')}
+                        className="btn btn-primary mt-3">Создать</button>
+                </div>
                 :
                 <br/>
         }
 
         <div className="card-grid">
             {initiatives.map((item) => (
-                <a href={`/info/${item.id}`} className="card" key={item.id}>
+                <a href={`/info/${item.id}`}  className="card" key={item.id}>
                     <img src={item.image} alt={item.name} />
                     <h2>{item.name}</h2>
                 </a>

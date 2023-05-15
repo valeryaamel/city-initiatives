@@ -24,10 +24,16 @@ const ImageSlider = ({ images }) => {
                     ></div>
                 ))}
             </div>
-            <div className="slider-controls">
-                <button onClick={prevImage}>Prev</button>
-                <button onClick={nextImage}>Next</button>
-            </div>
+            {
+                images.length > 1 ?
+                    <div className="slider-controls">
+                        <button onClick={prevImage}>Предыдущая</button>
+                        <button onClick={nextImage}>Следущая</button>
+                    </div>
+                    :
+                    <br/>
+            }
+
         </div>
     );
 };

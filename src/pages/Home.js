@@ -18,8 +18,11 @@ function Home(){
             <div className="row">
                 <div className="col-md-8 mx-auto">
                     <h1 className="text-center">Добро пожаловать на портал городских инициатив</h1>
-                    <p className="text-center">Назначение портала</p>
-
+                    <br/>
+                    <p className="text-center" style={{fontWeight: 'bold'}}>Помогаем Волгограду развиваться усилиями самих горожан</p>
+                    <br/>
+                    <p className="text-center">Мы помогаем людям создавать общий образ будущего и объединять усилия
+                        для его приближения.</p>
                     <h2 className="text-center">Последние проекты</h2>
 
                     <div className="card-grid">
@@ -31,13 +34,15 @@ function Home(){
                             </div>
                         ))}
                     </div>
-
+                    <h1 className="text-center">Контакты:</h1>
+                    <p className="text-center" style={{fontSize: 18}}>Валерия Мельникова +7 999 888 7766</p>
+                    <p className="text-center" style={{color: 'blue', fontSize: 18}}>volgograd.initiatives@mail.ru</p>
                 </div>
             </div>
             </div>
 
             <footer className="bg-primary text-white text-center py-3">
-            <p>Городские инициативы &copy; 2023</p>
+            <p >Городские инициативы &copy; 2023</p>
             </footer>
         </div>
         )
